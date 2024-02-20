@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Git Testing.md",
+                "file": "file.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Git Testing.md",
+                "file": "file.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Git Testing.md",
+                "file": "file.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Git Testing.md"
+                "file": "file.md"
               }
             }
           }
@@ -161,7 +161,8 @@
   },
   "active": "d636bf59689826cb",
   "lastOpenFiles": [
-    "README.md",
-    "Git Testing.md"
+    "Git Testing.md",
+    "file.md",
+    "README.md"
   ]
 }
