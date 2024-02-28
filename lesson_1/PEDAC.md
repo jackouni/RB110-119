@@ -2,23 +2,23 @@
 
 #### What does it stand for?
 
-**P** **-** (Understand the ) Problem
-**E -** **E**xamples / Test cases
-**D -** **D**ata Structure
-**A -** Algorithm
-**C -** **C**ode
-
-In this course only the **P and A** of the ***PEDAC*** process will be discussed.
+**P** **-** *(Understand the ) Problem*
+**E -** *Examples / Test cases*
+**D -** *Data Structure*
+**A -** *Algorithm*
+**C -** *Code*
 
 ### P => Understanding the Problem
 
 This includes 3 steps:
 1. Reading the Problem Description
-2. Check the test cases
-3. Ask the interviewer or person for clarity if needed
+2. Ask the interviewer or person for clarity if needed
 
-Structure this part by writing down the input(s) and output for the solution followed by the rules you need to follow for the solution.
+Structure this part by writing down the ***input(s) and output(s)*** for the solution followed by the the ***implicit and explicit rules*** you need to follow for the solution.
 
+##### Recap:
+- Read the problem description
+- Ask for clarifying details
+- Write down inputs and outputs
+- Write down the implicit and explicit rules for the solution
 ### D => Data Structure / Algorithm
-
-
