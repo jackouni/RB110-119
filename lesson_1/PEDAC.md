@@ -8,7 +8,7 @@
 **A -** *Algorithm*
 **C -** *Code*
 
-### P => Understanding the Problem
+### P ➡️ Understanding the Problem
 
 This includes 3 steps:
 1. Reading the Problem Description
@@ -21,4 +21,9 @@ Structure this part by writing down the ***input(s) and output(s)*** for the sol
 - Ask for clarifying details
 - Write down inputs and outputs
 - Write down the implicit and explicit rules for the solution
-### D => Data Structure / Algorithm
+
+### E ➡️ Examples & Test Cases
+
+- Define test cases that will confirm you've found a solution. 
+
+### D ➡️ Data Structure / Algorithm
