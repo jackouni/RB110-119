@@ -17,8 +17,35 @@ def valid_position?(coordinate, board)
   board[row][col] == '*'
 end 
 
-def win?(board)
-  
+def win?(board, marker)
+  is_win = false
+  WIN_POSITIONS.each do |coordinates|
+    mark_counter = 0 
+    coordinates.each do |coordinate|
+      row = coordinate[0]
+      col = coordinate[1]
+      
+      mark_counter += 1 if board[row][col] == marker 
+    end 
+
+    if mark_counter == 3
+      is_win = true
+      break
+    end 
+  end 
+
+  is_win 
+end 
+
+def display_winner(winner)
+  case winner
+  when 'user'
+    puts "Congratulations! You won!!"
+  when 'comp'
+    puts "Shucks. Computer beat you this time!"
+  else
+    puts 'Error'
+  end 
 end 
 
 def users_move(board)
@@ -99,12 +126,12 @@ board = [
 ]
 
 WIN_POSITIONS = [
-  [[0,1], [0,2], [0,3]],
-  [[1,1], [1,2], [1,3]],
-  [[2,1], [2,2], [2,3]],
+  [[0,0], [0,1], [0,2]],
+  [[1,0], [1,1], [1,2]],
+  [[2,0], [2,1], [2,2]],
+  [[0,0], [1,0], [2,0]],
   [[0,1], [1,1], [2,1]],
-  [[0,2], [1,2], [2,3]],
-  [[0,3], [1,3], [2,3]],
+  [[0,2], [1,2], [2,2]],
   [[0,1], [1,1], [2,2]],
   [[0,2], [1,1], [2,0]]
 ]
@@ -112,7 +139,17 @@ WIN_POSITIONS = [
 loop do
   user_mark = users_move(board)
   update_board(user_mark, 'user', board)
+  if win?(board, 'X')
+    display_winner('user')
+    break
+  end 
+  
   comp_mark = computers_move(board)
   update_board(comp_mark, 'computer', board)
+  if win?(board, 'O')
+    display_winner('comp')
+    break
+  end
   display_board(board)
 end 
+
