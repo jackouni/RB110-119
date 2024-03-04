@@ -14,7 +14,11 @@ def valid_position?(coordinate, board)
   row = coordinate[0]
   col = coordinate[1]
 
-  board[row][col] == nil
+  board[row][col] == '*'
+end 
+
+def win?(board)
+  
 end 
 
 def users_move(board)
@@ -65,16 +69,12 @@ def computers_move(board)
 end
 
 def display_board(board)
+  puts "CURRENT BOARD"
+  puts "-------------"
   board.each do |row|
-    puts "\n_____________"
-    row.each do |col|
-      if row.index(col) == 1
-        print "| #{col} |"
-      else 
-        print " #{col} " 
-      end 
-    end 
-  end
+    puts "| #{row[0]} | #{row[1]} | #{row[2]} |"
+  end 
+  puts "-------------"
 end 
 
 def update_board(coordinate, whos_turn, board)
@@ -93,9 +93,9 @@ end
 puts "Welcome to tictactoe!"
 
 board = [
-  [nil, nil, nil],
-  [nil, nil, nil],
-  [nil, nil, nil]
+  ['*', '*', '*'],
+  ['*', '*', '*'],
+  ['*', '*', '*']
 ]
 
 WIN_POSITIONS = [
@@ -109,8 +109,10 @@ WIN_POSITIONS = [
   [[0,2], [1,1], [2,0]]
 ]
 
-user_mark = users_move(board)
-update_board(user_mark, 'user', board)
-comp_mark = computers_move(board)
-update_board(comp_mark, 'computer', board)
-display_board(board)
+loop do
+  user_mark = users_move(board)
+  update_board(user_mark, 'user', board)
+  comp_mark = computers_move(board)
+  update_board(comp_mark, 'computer', board)
+  display_board(board)
+end 
