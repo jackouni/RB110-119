@@ -1,12 +1,22 @@
-require 'pry'
+require 'pry-byebug'
 
 EMPTY_MARKER = ' '
 USER_MARKER = 'X'
 COMP_MARKER = 'O'
+WINNING_LINES = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    [1, 5, 9],
+    [3, 5, 7]
+]
 
 def prompt(message)
   puts "=> #{message}"
-end 
+end
 
 def display_board(board)
   system 'clear'
@@ -23,16 +33,16 @@ def display_board(board)
   puts "  #{board[7]}   |  #{board[8]}   |  #{board[9]}  "
   puts "      |      |     "
   puts " "
-end 
+end
 
-def intialize_board 
+def intialize_board
   new_board = {}
-  (1..9).each {|num| new_board[num] = EMPTY_MARKER}
+  (1..9).each { |num| new_board[num] = EMPTY_MARKER }
   new_board
-end 
+end
 
 def empty_squares(board)
-  board.keys.select {|num| board[num] == EMPTY_MARKER}
+  board.keys.select { |num| board[num] == EMPTY_MARKER }
 end
 
 def player_places_piece!(board)
@@ -40,82 +50,90 @@ def player_places_piece!(board)
   empty = empty_squares(board)
 
   loop do
-    prompt "Choose a square (#{empty.join(', ')})"
+    prompt "Choose a square: #{joinor(empty, ', ', 'and')}"
     square = gets.chomp.to_i
     break if empty.include?(square)
     prompt "Please enter a valid input."
   end
-  
-  board[square] = USER_MARKER 
-end 
+
+  board[square] = USER_MARKER
+end
 
 def comp_places_piece!(board)
-  square = empty_squares(board).sample
-  board[square] = COMP_MARKER
-end 
+  selected_square = empty_squares(board).sample
+  board[selected_square] = COMP_MARKER
+end
 
 def board_full?(board)
   empty_squares(board).empty?
-end 
+end
 
 def someone_won?(board)
   !!detect_winner(board)
 end
 
 def detect_winner(board)
-  winning_lines = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9],
-    [1, 4, 7],
-    [2, 5, 8],
-    [3, 6, 9],
-    [1, 5, 9],
-    [3, 5, 7],
-  ]
-
   winner = nil
 
-  winning_lines.each do |line|
+  WINNING_LINES.each do |line|
     if line.all? { |square| board[square] == USER_MARKER }
-      winner = 'User' 
+      winner = 'User'
       break
-    end 
-  end 
+    end
 
-  winning_lines.each do |line|
     if line.all? { |square| board[square] == COMP_MARKER }
-      winner = 'Computer' 
+      winner = 'Computer'
       break
-    end 
-  end 
+    end
+  end
 
   winner
 end
+
+def joinor(arr, delimiter=', ', word='or')
+  case arr.size
+  when 0 then ''
+  when 1 then arr[0].to_s
+  when 2 then arr.join(" #{word} ")
+  else
+    first_elements = arr[0, arr.size - 1].join(delimiter)
+    "#{first_elements} #{word} #{arr.last}"
+  end 
+end
+
+def display_scores(user_score, comp_score)
+  puts "User Wins: #{user_score} | Computer Wins: #{comp_score}"
+end
+
+user_score = 0
+comp_score = 0
 
 loop do # Main Game Loop
   board = intialize_board
 
   loop do # Round Loop
     display_board(board)
+    display_scores(user_score, comp_score)
     player_places_piece!(board)
     break if someone_won?(board) || board_full?(board)
 
     comp_places_piece!(board)
     break if someone_won?(board) || board_full?(board)
-  end 
+  end
 
   display_board(board)
 
   if someone_won?(board)
+    user_score += 1 if detect_winner(board) == 'User'
+    comp_score += 1 if detect_winner(board) == 'Computer'
     prompt "#{detect_winner(board)} won!"
   else
     prompt "It's a tie!"
-  end 
+  end
 
   prompt "Play again? (y/n):"
   answer = gets.chomp
   break if answer == 'n' || answer == 'N'
-end 
+end
 
 prompt "Thanks for playing TicTacToe, goodbye!"
