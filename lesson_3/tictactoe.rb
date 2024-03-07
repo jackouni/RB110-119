@@ -206,7 +206,6 @@ board = [
 ]
 
 outcome = nil
-binding.pry
 loop do
   user_mark = users_move(board)        # User makes a move
   update_board(user_mark, 'X', board)
