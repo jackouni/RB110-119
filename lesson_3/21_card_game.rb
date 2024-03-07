@@ -20,10 +20,10 @@ end
 
 #########
 
-def deal_card(deck, players_hand)
+def deal_card(deck, player)
   card_dealt = deck.sample
 
-  players_hand << card_dealt
+  player[:hand] << card_dealt
 
   deck.each_with_index do |card, index|
     if card == card_dealt
@@ -44,11 +44,11 @@ def joinor(arr, delimiter=', ', word='or')
   end 
 end
 
-def display_dealers_hand(dealers_hand)
+def display_dealer_hand(dealers_hand)
   puts "Dealer has: #{dealers_hand[0]} and unknown card"
 end
 
-def display_users_hand(users_hand)
+def display_user_hand(users_hand)
   puts "You have: #{joinor(users_hand, ', ', 'and')}"
 end
 
@@ -56,51 +56,62 @@ def get_ace_value(players_total)
   players_total <= 10 ? 11 : 1
 end 
 
-def get_card_value(players_total, card)
+def get_card_value(player, card)
   if FACE_VALUES.include? card 
     card
   elsif TEN_POINTS.include? card
     10
   else
-    get_ace_value(players_total)
+    get_ace_value(player[:score])
   end
 end 
 
-def updated_total(players_hand)
-  sum = 0 
-  players_hand.each { |card| sum += get_card_value(sum, card)}
-  sum
+def updated_total(player)
+  player[:score] = 0 
+  player[:hand].each { |card| player[:score] += get_card_value(player, card) }
 end 
 
 ###
 
-deck = initialize_deck
-users_hand = []
-user_total = 0
-dealers_hand = []
-dealer_total = 0
+deck = initialize_deck()
+winner = nil
+
+user = {
+  hand: [],
+  score: 0
+}
+
+dealer = {
+  hand: [],
+  score: 0
+}
 
 2.times do
-  deal_card(deck, users_hand)
-  deal_card(deck, dealers_hand)
+  deal_card(deck, user)
+  deal_card(deck, dealer)
 end 
 
-loop do
-  display_dealers_hand(dealers_hand)
-  display_users_hand(users_hand)
-  user_total = updated_total(users_hand)
+loop do 
+  display_dealer_hand(dealer[:hand])
+  display_user_hand(user[:hand])
+  updated_total(user)
 
-  break if user_total > 21 
+  break if user[:score] > 21 
 
-  prompt "Your points: #{user_total}"
+  prompt "Your points: #{user[:score]}"
   prompt "Do you want to \"hit\" or \"stay\"?"
   user_choice = gets.chomp
   if user_choice == 'hit'
-    deal_card(deck, users_hand)
+    deal_card(deck, user)
   elsif user_choice == 'stay'
     break
   else
     prompt "Please input a valid answer!! (Type: 'hit' or 'stay')"
     puts ""
   end 
-end 
+end
+
+if user[:score] > 21
+  # winner = 'dealer'
+  # break main game loop??
+end
