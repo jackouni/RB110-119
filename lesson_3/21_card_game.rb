@@ -1,14 +1,29 @@
 TEN_POINTS = ['queen', 'king', 'jack']
-FACE_VALUES = (1..10)
+FACE_VALUES = (2..10)
 
 def prompt(msg)
   puts "=> #{msg}"
 end
 
+def joinor(arr, delimiter=', ', word='or')
+  case arr.size
+  when 0 then ''
+  when 1 then arr[0].to_s
+  when 2 then arr.join(" #{word} ")
+  else
+    first_elements = arr[0, arr.size - 1].join(delimiter)
+    "#{first_elements} #{word} #{arr.last}"
+  end
+end
+
+def create_player
+  { hand: [], score: 0 }
+end
+
 def initialize_deck
   deck = []
   4.times do
-    deck << (1..10).to_a
+    deck << (2..10).to_a
     deck << 'ace'
     deck << 'king'
     deck << 'queen'
@@ -28,18 +43,7 @@ def deal_card!(deck, player)
       deck.delete_at(index)
       break
     end
-  end 
-end
-
-def joinor(arr, delimiter=', ', word='or')
-  case arr.size
-  when 0 then ''
-  when 1 then arr[0].to_s
-  when 2 then arr.join(" #{word} ")
-  else
-    first_elements = arr[0, arr.size - 1].join(delimiter)
-    "#{first_elements} #{word} #{arr.last}"
-  end 
+  end
 end
 
 def reveal_dealer_hand(dealers_hand)
@@ -59,55 +63,57 @@ end
 
 def get_ace_value(players_total)
   players_total <= 10 ? 11 : 1
-end 
+end
 
 def get_card_value(player, card)
-  if FACE_VALUES.include? card 
+  if FACE_VALUES.include? card
     card
   elsif TEN_POINTS.include? card
     10
   else
     get_ace_value(player[:score])
   end
-end 
+end
 
-def update_score(player)
-  player[:score] = 0 
+def update_score!(player)
+  player[:score] = 0
   player[:hand].each { |card| player[:score] += get_card_value(player, card) }
-end 
+end
 
 def bust?(player)
-  player[:score] > 21 ? true : false 
+  player[:score] > 21
 end
 
 def detect_winner(user, dealer)
   return 'user' if bust?(dealer)
   return 'dealer' if bust?(user)
-  
+
   if user[:score] > dealer[:score]
     'user'
   elsif user[:score] < dealer[:score]
     'dealer'
   else
     'tie'
-  end 
+  end
 end
 
 def user_turn(user, dealer, deck) # User turn: 'hit' or 'stay'
   loop do
-    update_score(user)
+    update_score!(user)
     display_dealer_hand(dealer[:hand])
     display_user_hand(user[:hand])
+
     prompt "| Your points: #{user[:score]} |"
-    
-    if bust?(user) 
+
+    if bust?(user)
       system 'clear'
-      prompt "You busted!"
+      prompt "User busts!"
       break
     end
 
     prompt "Do you want to \"hit\" or \"stay\"?"
     user_choice = gets.chomp
+
     if user_choice == 'hit'
       system 'clear'
       deal_card!(deck, user)
@@ -117,17 +123,17 @@ def user_turn(user, dealer, deck) # User turn: 'hit' or 'stay'
     else
       prompt "Please input a valid answer!! (Type: 'hit' or 'stay')"
       system 'clear'
-    end 
-  end 
-end 
+    end
+  end
+end
 
 def dealer_turn(dealer, deck)
   loop do
-    update_score(dealer)
+    update_score!(dealer)
 
-    if bust?(dealer) 
+    if bust?(dealer)
       system 'clear'
-      prompt "Dealer busted!"
+      prompt "Dealer busts!"
       break
     end
 
@@ -135,33 +141,26 @@ def dealer_turn(dealer, deck)
       deal_card!(deck, dealer)
     else
       break
-    end 
-  end 
+    end
+  end
 end
 
-### GAME BEGIN
+### GAME START
 
-deck = initialize_deck()
+deck = initialize_deck
 
-user = {
-  hand: [],
-  score: 0
-}
-
-dealer = {
-  hand: [],
-  score: 0
-}
+user = create_player
+dealer = create_player
 
 2.times do
   deal_card!(deck, user)
   deal_card!(deck, dealer)
-end 
+end
 
 user_turn(user, dealer, deck)
 dealer_turn(dealer, deck) unless bust?(user)
-update_score(dealer)
 
+update_score!(dealer)
 reveal_dealer_hand(dealer[:hand])
 display_user_hand(user[:hand])
 
