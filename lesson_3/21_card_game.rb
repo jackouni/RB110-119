@@ -1,5 +1,5 @@
 TEN_POINTS = ['queen', 'king', 'jack']
-FACE_VALUES = (2..10)
+FACE_VALUES = (2..10).to_a
 
 ### DISPLAYS & OUTPUTS:
 
@@ -28,15 +28,46 @@ def display_dealer_hand(dealers_hand)
   puts "Dealer has: #{dealers_hand[0]} and unknown card"
 end
 
-def display_user_hand(users_hand)
+def reveal_user_hand(users_hand)
   puts "You have: #{joinor(users_hand, ', ', 'and')}"
   puts "------------------------------------------------"
+end
+
+def display_points(player)
+  prompt "| Your points: #{user[:points]} | Dealer's points: #{dealer[:points]}"
 end
 
 def display_scores(user, dealer)
   puts "_____________________"
   puts "|USER   V.S   DEALER|"
   puts "  #{user[:score]}              #{dealer[:score]} "
+end
+
+def round_display(user, dealer)
+  display_scores(user, dealer)
+  display_dealer_hand(dealer[:hand])
+  reveal_user_hand(user[:hand])
+end
+
+def new_game_sequence
+  system 'clear'
+  prompt "New game started!"
+  sleep(1.5)
+  system 'clear'
+end
+
+def reveal_player_hands(user, dealer)
+  reveal_dealer_hand(dealer[:hand])
+  reveal_user_hand(user[:hand])
+end
+
+def end_of_round_output(winner, user, dealer)
+  prompt "| Your points: #{user[:points]} | Dealer's points: #{dealer[:points]}"
+  case winner
+  when 'user' then prompt "Congrats, you beat the dealer!"
+  when 'dealer' then prompt "The dealer beat you this time!"
+  else prompt "Tie game."
+  end
 end
 
 ### GAME MECHANICS:
@@ -48,27 +79,18 @@ end
 def initialize_deck
   deck = []
   4.times do
-    deck << (2..10).to_a
+    deck << FACE_VALUES
     deck << 'ace'
     deck << 'king'
     deck << 'queen'
     deck << 'jack'
   end
-
-  deck.flatten
+  
+  deck.flatten.shuffle
 end
 
-def deal_card!(deck, player)
-  card_dealt = deck.sample
-
-  player[:hand] << card_dealt
-
-  deck.each_with_index do |card, index|
-    if card == card_dealt
-      deck.delete_at(index)
-      break
-    end
-  end
+def deal_card!(deck, player)  
+  player[:hand] << deck.pop
 end
 
 def get_ace_value(players_total)
@@ -94,10 +116,24 @@ def bust?(player)
   player[:points] > 21
 end
 
+def player_hits?
+  loop do
+    prompt "Do you want to \"hit\" or \"stay\"?"
+    user_choice = gets.chomp.downcase
+
+    case user_choice
+    when "hit" then return true
+    when "stay" then return false
+    else 
+      prompt "Please input a valid answer!! (Type: 'hit' or 'stay')"
+    end 
+  end
+end
+
 def detect_winner(user, dealer)
   return 'user' if bust?(dealer)
   return 'dealer' if bust?(user)
-
+  
   if user[:points] > dealer[:points]
     'user'
   elsif user[:points] < dealer[:points]
@@ -108,65 +144,61 @@ def detect_winner(user, dealer)
 end
 
 def play_again?
-  user_plays_again = false
-
   loop do
     prompt "Would you like to play again? ('y' / 'n'):"
     user_choice = gets.chomp.downcase
 
     case user_choice
-    when 'y'
-      user_plays_again = true
-      break
-    when 'n'
-      break
-    else
+    when 'y' then return true    
+    when 'n' then return false
+    else 
       system 'clear'
       prompt "Please select a valid input!!"
     end
   end
-
-  user_plays_again
 end
 
-def increment_score(player)
-  player[:score] += 1
+def update_score!(winner, user, dealer)
+  case winner
+  when 'user' then user[:score] += 1
+  when 'dealer' then dealer[:score] += 1
+  end
 end
 
 def reset_hand(player)
   player[:hand] = []
 end
 
+def reset_game(user, dealer, deck)
+  reset_hand(user)
+  reset_hand(dealer)
+  deck = initialize_deck
+end 
+
 ### USER & DEALER TURNS:
 
 def user_turn(user, dealer, deck)
   loop do
     update_points!(user)
-    display_scores(user, dealer)
-    display_dealer_hand(dealer[:hand])
-    display_user_hand(user[:hand])
+    round_display(user, dealer)
 
     prompt "| Your points: #{user[:points]} |"
 
+    
     if bust?(user)
       system 'clear'
       prompt "User busts!"
       break
     end
-
-    prompt "Do you want to \"hit\" or \"stay\"?"
-    user_choice = gets.chomp
-
-    if user_choice == 'hit'
-      system 'clear'
+    
+    if player_hits?
       deal_card!(deck, user)
-    elsif user_choice == 'stay'
-      system 'clear'
-      break
     else
       system 'clear'
-      prompt "Please input a valid answer!! (Type: 'hit' or 'stay')"
+      break
     end
+    system 'clear'
+
   end
 end
 
@@ -180,11 +212,8 @@ def dealer_turn(dealer, deck)
       break
     end
 
-    if dealer[:points] < 17
-      deal_card!(deck, dealer)
-    else
-      break
-    end
+    break unless dealer[:points] < 17
+    deal_card!(deck, dealer)
   end
 end
 
@@ -205,36 +234,16 @@ loop do
   dealer_turn(dealer, deck) unless bust?(user)
 
   update_points!(dealer)
-  reveal_dealer_hand(dealer[:hand])
-  display_user_hand(user[:hand])
+  reveal_player_hands(user, dealer)
 
   ### ROUND CONCLUDES:
-
-  prompt "| Your points: #{user[:points]} | Dealer's points: #{dealer[:points]}"
-
+  
   winner = detect_winner(user, dealer)
+  end_of_round_output(winner, user, dealer)
+  update_score!(winner, user, dealer)
 
-  if winner == 'user'
-    increment_score(user)
-    prompt "Congrats, you beat the dealer!"
-  elsif winner == 'dealer'
-    increment_score(dealer)
-    prompt "The dealer beat you this time!"
-  else
-    prompt "Tie game."
-  end
-
-  if play_again?
-    reset_hand(user)
-    reset_hand(dealer)
-    deck = initialize_deck
-
-    system 'clear'
-    prompt "New game started!"
-    sleep(1.5)
-    system 'clear'
-  else
-    prompt "Thanks for playing. Goodbye."
-    break
-  end
+  break unless play_again?
+  reset_game(user, dealer, deck)
 end
+
+prompt "Thanks for playing. Goodbye."
