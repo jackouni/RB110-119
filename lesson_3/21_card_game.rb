@@ -209,7 +209,7 @@ def dealer_turn(dealer, deck)
     if bust?(dealer)
       system 'clear'
       prompt "Dealer busts!"
-      break
+      # break
     end
 
     break unless dealer[:points] < 17
