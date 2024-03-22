@@ -34,7 +34,7 @@ The framework I follow for explaining iterative methods with blocks is this:
 
 ## Essentials:
 
-### *Array#each*
+### *Array#each { |element| ...}*
 <details>
 <summary>Description:</summary>
 `Array#each` when given a block with each element from the caller, will return the original calling object, with no regards to the return values from the block.
@@ -53,7 +53,7 @@ arr.each { |num| puts num}
 
 ---
 
-### *Array#map*
+### *Array#map* / *Array#collect { |element| ...}*
 <details>
 <summary>Description:</summary>
 `Array#map` when given a block with each element from the caller, will return a new Array populated with the returned values from each block iteration. 
@@ -72,7 +72,7 @@ arr.map { |num| num + 1}
 
 ---
 
-### *Array#select* / *Array#filter*
+### *Array#select* / *Array#filter(arg) { |element| ...}*
 <details>
 <summary>Description:</summary>
 `Array#select` when given a block with each element from the caller, will return a new Array with elements from the caller whose respective blocks return a truthy value.
@@ -91,10 +91,10 @@ arr.select { |num| num.odd? }
 
 ---
 
-### *Array#all?*
+### *Array#all?(arg) { |element| ...}*
 <details>
 <summary>Description:</summary>
-`Array#all?(arg) { |element| ...}` when given an `arg` will return `true` if every `element` from the caller is equal to `arg`, otherwise `false` is returned. When given no argument and a block with each `element` from the caller, will return `true` if **all** blocks return a truthy value, otherwise `false` is returned.
+`Array#all?` when given an argument will return `true` if every `element` from the caller is equal to the argument, otherwise `false` is returned. When given no argument and a block with each `element` from the caller, will return `true` if **all** blocks return a truthy value, otherwise `false` is returned.
 </details>
 
 <b>Practice Example:</b>
@@ -110,10 +110,10 @@ arr.all? { |num| num < 5 }
 
 ---
 
-### *Array#any?*
+### *Array#any?(arg) { |element| ...}*
 <details>
 <summary>Description:</summary>
-`Array#any?(arg) { |element| ...}` when given an `arg` will return `true` if any `element` from the caller is equal to `arg`, otherwise `false` is returned. When given no argument and a block with each `element` from the caller, will return `true` if **any** blocks return a truthy value, otherwise `false` is returned.
+`Array#any?` when given an argument will return `true` if any `element` from the caller is equal to the argument, otherwise `false` is returned. When given no argument and a block with each `element` from the caller, will return `true` if **any** blocks return a truthy value, otherwise `false` is returned.
 </details>
 
 <b>Practice Example:</b>
@@ -129,10 +129,10 @@ arr.any? { |num| num > 3 }
 
 ---
 
-### *Array#sort*
+### *Array#sort {|element1, element2| ...}*
 <details>
 <summary>Description:</summary>
-`Array#sort { |pair1, pair2| ...}` 
+`Array#sort` when given no block will return a new array with the elements from the caller, rearranged in an order from least to greatest value. When given a block with 2 elements to compare against from caller, will return a new array of the elements from the caller arranged in a certain order based on the return values of each block. The block needs to return either `0`, `1`, or `-1`, indicating that the first element is equal to, greater than or less than the second element it's being compared against, respectively. This is generally done using the spaceship operator (`<=>`). Given the block's return value, the method will sort the elements in the new array accordingly (how this works under the hood is beyond the scope of this document).
 </details>
 
 <b>Practice Example:</b>
@@ -144,4 +144,61 @@ arr.sort
 <details>
 <summary>Answer/Solution:</summary>
 `sort` is invoked on the caller object `arr`. `sort`, when given no block, returns a new Array with elements from the caller sorted by value from least to greatest. In this example, `sort` will return a new Array of `[1, 2, 3, 4, 5]`.
+</details>
+
+---
+
+### *Array#sort_by {|element1| ...}*
+<details>
+<summary>Description:</summary>
+`Array#sort_by` when given a block with each element from caller, will return a new array of the elements from the caller arranged in order from least to greatest value of the return values of their respective block. 
+</details>
+
+<b>Practice Example:</b>
+```ruby
+# Explain what is returned from this code and why:
+arr = ['this', 'is', 'not', 'hack', 'n', 'slash']
+arr.sort_by { |word| word.size }
+```
+<details>
+<summary>Answer/Solution:</summary>
+`sort_by` is invoked on the caller object `arr` and passed a block with a block parameter of `word` that'll bind to the element currently being iterated over in `arr`. `sort_by` returns a new Array of the elements from the caller, sorted in order from least to greatest value by their respective block's return value. For each block iteration the the `size` method is invoked on the current element being iterated on, returning the element's character length from the block. This will result in a new Array of the elements from the caller sorted in order of least to greatest character length,`["n", "is", "not", "this", "hack", "slash"]`. 
+</details>
+
+---
+
+### *Array#map!* / *Array#collect! { |element| ...}*
+<details>
+<summary>Description:</summary>
+`Array#map` when given a block with each element from the caller, will repalce each element with its respective block's return value, and return the caller object.
+</details>
+
+<b>Practice Example:</b>
+```ruby
+# Explain what is returned from this code and why:
+arr = [1, 2, 3, 4]
+arr.map! { |num| num * 2}
+```
+<details>
+<summary>Answer/Solution:</summary>
+`map!` is invoked on the caller object `arr` and passed a block with a block parameter of `num` that'll bind to the current element being iterated over in `arr`. `map!` replaces each element in the caller with its respective block's return value. Each iteration of the block will return the value of `num * 2`, resulting in `arr` mutating to: `[2, 4, 6, 8]`.
+</details>
+
+---
+
+### *Array#select!* / *Array#filter! { |element| ...}*
+<details>
+<summary>Description:</summary>
+`Array#select` when given a block with each element from the caller, mutates the caller to an Array of elements from itself whose respective blocks return a truthy value.
+</details>
+
+<b>Practice Example:</b>
+```ruby
+# Explain what is returned from this code and why:
+arr = [1, 2, 3, 4, 5]
+arr.select! { |num| num.even? }
+```
+<details>
+<summary>Answer/Solution:</summary>
+`select!` is invoked on the caller object `arr` and passed a block with a block parameter of `num` that'll bind to the current element being iterated over in `arr`. `select!` mutates the caller to an Array of elements from itself whose respective blocks return a truthy value. 
 </details>
