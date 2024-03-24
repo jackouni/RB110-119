@@ -3,28 +3,36 @@ The methods in this study guide are methods that may be helpful in mastery of RB
 
 ## Format for explaining iterative methods:
 The framework I follow for explaining iterative methods with blocks is this:
-1. **Explain what is happening:**
+1. **State what is happening:**
     1. State what method is being called and on what caller object:</br> 
     - *"`#some_method` is invoked on the caller object `caller_obj`..."*
-    2. State what argument is being passed:</br> 
-    - *"... and is passed a reference to `value` as an argument ..."*
-    3. Explain the block: </br>
-    - *"...is then passed a block with block parameter(s), `parameters`... that'll bind to the current `element_or_obj`..."*
+    2. State what argument is being passed (if any):</br> 
+    - *"... with a reference to `value` passed as an argument ..."*
+    3. Explain the block (if any): </br>
+    - *"and is then passed a block with block parameter, `para` that'll bind to the current `element` being iterated over in `caller_obj`..."*
 
-2. **Explain what the method does:**
+2. **State what the method does:**
     1. What the method returns:</br>
-      - *"... returns [ 'the calling object' / 'a new array' / 'a new hash' / 'a boolean' ] "*
+      - *"`some_method` (when given a block, argument, both, etc... ) returns [ 'the calling object' / 'a new array' / 'a new hash' / 'a boolean' ] "*
     2. If/How it uses the return values from blocks:</br>
-      - *"... with no regard to the return value of each block"*</br>
-      - *"... and adds the return value of each block to the new Array/Hash"*</br>
-      - *"... each element being iterated over is mutated to the corresponding block's returned value"* </br>
-      - *"... If a block returns a truthy/falsy value, [ 'the current element being iterated over is returned' / 'the current element being iterated over is added to the new array' / 'the method returns `True/False`' /  'the element being iterated over is removed from the caller' ]"*
+      - *"... with no regard to the return value of each block iteration."*</br>
+      - *"... populated with the return values from each block iteration."*</br>
+      - *"... each element being iterated over is mutated to its respective block's return value"* </br>
+      - *"... with elements from caller whose respective blocks return `true` / `false`"*
 
-3. **What's happening in each block iteration?:**
-    1. *"Each iteration of the block will do `x, y, and z"*
-    2. If it does something with the return value: </br>
-    - *"`value` is returned from the block and `used in this way`"*
-4. **What is the return/side-effect?:**
+3. **Explain what's happening in each block iteration:**
+    1. *"Each iteration of the block will execute `xyz`"*
+    2. **If there's a method nested in this block, go back to line 1 and repeat**
+    3. Optional: 
+    - *"`xyz` will (explain in **practical terms** what will be returned or outputted from `xyz`)..."*
+    4. If it does do something with the return value: 
+    - *"the return value of `xyz` is then returned from the current block iteration"*
+
+5. **Explain what the return and/or side-effect of the method is:**
+    - *"This will result in outputs of: ..."*
+    - *"`some_method` then returns the caller object, `caller_obj`."*
+    - *"This will result in `caller_obj.some_method` returning [a new Array /a new Hash / an Integer / a Boolean] of `value`."*
+    - *"This will result in `caller_obj` being mutated to `value`."*
 
 #### Caveat:
 > This is just a rough guideline, there are times where you can't follow this guide to a 'T' and that's okay. You will also have to find a way to explain/incorporate the relevance and use of the argument(s) (if any) in your explanations. Some of this stuff you can omit as well, this depends on what the question is asking and the level of precision that is being asked of you. This is just somewhere to start so you can find your own flavour of explaining code.
@@ -175,7 +183,7 @@ arr.sort_by { |word| word.size }
 ### *Array#map!* / *Array#collect! { |element| ...}*
 <details>
 <summary>Description:</summary>
-`Array#map` when given a block with each element from the caller, will repalce each element with its respective block's return value, and return the caller object.
+`Array#map` when given a block with each element from the caller, each element being iterated over is mutated to its respective block's return value.
 </details>
 
 <b>Practice Example:</b>
@@ -186,7 +194,7 @@ arr.map! { |num| num * 2}
 ```
 <details>
 <summary>Explanation:</summary>
-`map!` is invoked on the caller object `arr` and passed a block with a block parameter of `num` that'll bind to the current element being iterated over in `arr`. `map!` replaces each element in the caller with its respective block's return value. Each iteration of the block will return the value of `num * 2`, resulting in `arr` mutating to: `[2, 4, 6, 8]`.
+`map!` is invoked on the caller object `arr` and passed a block with a block parameter of `num` that'll bind to the current element being iterated over in `arr`. `map!` mutates each element in the caller to its respective block's return value. Each iteration of the block will return the value of `num * 2`, resulting in `arr` mutating to: `[2, 4, 6, 8]`.
 </details>
 
 ---
@@ -695,5 +703,5 @@ str.each_char { |char| puts char }
 ---
  
 # Good-to-Knows:
-> This next section is what I call *"good-to-knows"*. They aren't 100% necessary, but they will help you out a lot as opposed to writing out certain logic from scratch using the *"essentials"*.
+> This next section is what I call *"good-to-knows"*. They aren't 100% necessary, but they will help you out a lot as opposed to writing out certain logic from scratch using just the *"essentials"*.
 
