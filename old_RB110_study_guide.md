@@ -35,7 +35,7 @@ In general, you should be familiar with Ruby syntax and operators. You should al
 - upcase upcase!
 <br>
 
-### Array methods: all?
+### Array methods: 
 - any?
 - each
 -  each_with_index
@@ -60,6 +60,7 @@ In general, you should be familiar with Ruby syntax and operators. You should al
 - sort
 - sort!
 - unshift
+- all?
 <br>
 
 ### Hash methods: all?
